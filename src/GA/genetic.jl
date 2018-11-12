@@ -13,7 +13,7 @@ sort!(scoredChromosomes::ScoredChromosomes) = sort!(scoredChromosomes, by= x -> 
 
 #--------------
 
-timetablingProblem = timetableImport()
+timetablingProblem = timetableImport(importMode)
 
 #---------------
 
@@ -28,18 +28,18 @@ end
 
 #TODO make initialzePop generic
 function initializePop(popSize::Int)
-    if typeof(timetablingProblem) == TutorialTimetablingProblem
+    if typeof(timetablingProblem) == SimpleTutorialTimetablingProblem
         _initializePopTutorial(popSize)
     else
-        error("timetablingProblem should be of type TutorialTimetablingProblem")
+        error("timetablingProblem should be of type SimpleTutorialTimetablingProblem")
     end
 end
 function _initializePopTutorial(popSize)
-    Chromosomes::ScoredChromosomes{TutorialGene}=[]
+    Chromosomes::ScoredChromosomes{SimpleTutorialGene}=[]
     for i in 1:popSize
-        chr = Chromosome{TutorialGene}([])
+        chr = Chromosome{SimpleTutorialGene}([])
         for e in timetablingProblem.events
-            chr[e] = TutorialGene(rand(1:timetablingProblem.timeslotAmount))
+            chr[e] = SimpleTutorialGene(rand(1:timetablingProblem.timeslotAmount))
         end
         push!(Chromosomes,chr)
     end

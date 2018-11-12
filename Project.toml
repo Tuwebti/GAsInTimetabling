@@ -1,0 +1,6 @@
+authors = ["malik <tuwebti.malik@gmail.com>"]
+name = "timetabling"
+uuid = "6ff13c40-e5fc-11e8-0490-9f34c5c037ba"
+version = "0.1.0"
+
+[deps]

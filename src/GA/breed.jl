@@ -9,7 +9,7 @@ const UniformCrossover = UniformCrossoverAlg()
 function breed(chr1::Chromosome,chr2::Chromosome, alg::BreedAlg=UniformCrossover)#implements uniform crossover
     _breed(chr1 , chr2 , alg)
 end
-function _breed(chr1::Chromosome{TutorialGene}, chr2::Chromosome{TutorialGene}, ::UniformCrossoverAlg)
+function _breed(chr1::Chromosome, chr2::Chromosome, ::UniformCrossoverAlg)
     selectedFromSecond=filter(x -> rand(Bool), keys(chr2))
     child=deepcopy(chr1)
     for key in selectedFromSecond

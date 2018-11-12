@@ -21,7 +21,7 @@ function initializeFitness(alg::FitnessAlgorithm = simpleFitnessAlg)
     return chr -> _fitness(chr,constraints,alg)
 end
 
-function _fitness(chr::Chromosome{TutorialGene} ,constraints::EdgeConstraints , ::SimpleFitnessAlg)
+function _fitness(chr::Chromosome{SimpleTutorialGene} , constraints::EdgeConstraints , ::SimpleFitnessAlg)
     violations = 1
     for e in constraints.edges
         if chr[e[1]].timePeriod == chr[e[2]].timePeriod
@@ -34,10 +34,10 @@ end
 #-------------
 
 function getConstraints()
-    timetablingProblem = timetableImport()
+    timetablingProblem = timetableImport(importMode)
     _getConstraints(timetablingProblem)
 end
-function _getConstraints(problem::TutorialTimetablingProblem)
+function _getConstraints(problem::SimpleTutorialTimetablingProblem)
     constraints = EdgeConstraints(Set())
     for events in values(problem.studentEnrollement)
         union!(constraints.edges , findPairs(events))

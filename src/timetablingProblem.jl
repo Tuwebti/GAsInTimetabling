@@ -28,3 +28,9 @@ struct TutorialTimetablingProblem <: TimetablingProblem
     timeslotAmount::Int
     studentEnrollement::StudentEnrollement
 end
+struct SimpleTutorialTimetablingProblem <: TimetablingProblem
+    events::Set{Event}
+    students::Set{Student}
+    timeslotAmount::Int
+    studentEnrollement::StudentEnrollement
+end

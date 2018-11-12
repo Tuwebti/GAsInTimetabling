@@ -9,7 +9,7 @@ const SEFM = SEFMAlg()
 function mutate!(scoredChr::ScoredChromosome, alg::MutateAlgorithm=SEFM)
     _mutate!(scoredChr, alg)
 end
-function _mutate!(scoredChr::ScoredChromosome{TutorialGene}, ::SEFMAlg)# Stochastic Event freeing mutation
+function _mutate!(scoredChr::ScoredChromosome, ::SEFMAlg)# Stochastic Event freeing mutation
     chr=scoredChr.chr
     key=rand(keys(chr))
     maxTime= (0,0)

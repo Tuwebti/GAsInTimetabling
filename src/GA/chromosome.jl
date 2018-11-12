@@ -19,6 +19,9 @@ mutable struct TutorialGene <: EventBasedGene   #represents Wednesday morning tu
     lecturer::Lecturer
 end
 TutorialGene(timeperiod)=TutorialGene(timeperiod, "noClassroom", "noLecturer")
+mutable struct SimpleTutorialGene <: EventBasedGene
+    timePeriod::Timeperiod
+end
 
 
 struct Chromosome{V <: Gene}
