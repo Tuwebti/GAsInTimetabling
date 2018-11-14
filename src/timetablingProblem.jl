@@ -1,17 +1,5 @@
-#= create a Timetabling problem according to different possible timetable structures
-=#
-#=
-module TimetablingProblemModule
-export TimetablingProblem ,
-    Event ,
-    Lecturer ,
-    Classroom ,
-    StudentEnrollement ,
-    TutorialTimetablingProblem
-=#
 
 abstract type TimetablingProblem end
-
 
 const Event = String
 const Lecturer = String

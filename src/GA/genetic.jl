@@ -21,6 +21,7 @@ timetablingProblem = timetableImport(importMode)
 function evolution!(popSize::Int=5)
     chromosomes=initializePop(popSize)
     iterateEvolution!(chromosomes, simpleAlg)
+    endHook(chromosomes)
     return chromosomes
 end
 
@@ -29,7 +30,9 @@ end
 #TODO make initialzePop generic
 function initializePop(popSize::Int)
     if typeof(timetablingProblem) == SimpleTutorialTimetablingProblem
-        _initializePopTutorial(popSize)
+        chromosomes=_initializePopTutorial(popSize)
+        beginHook(chromosomes)
+        return chromosomes
     else
         error("timetablingProblem should be of type SimpleTutorialTimetablingProblem")
     end
@@ -62,7 +65,9 @@ function _iterateEvolution!(chromosomes, ::SimpleAlg)
         selectCulling!(chromosomes, simple_select_culling_alg)
         selectMutation!(chromosomes, simple_select_mutation_alg)
         selectBreeding!(chromosomes, simple_select_breeding_alg)
+        iterateHook(chromosomes, i)
     end
+    return chromosomes
 end
 
 #--------------
@@ -109,3 +114,8 @@ function _selectCulling!(chromosomes, ::Simple_select_culling_alg)
     pop!(chromosomes)
 end
 
+
+#default empty implementation for hooks
+beginHook(_)= nothing
+iterateHook(_,_)= nothing
+endHook(_)= nothing
