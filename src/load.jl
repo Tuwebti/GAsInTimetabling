@@ -7,7 +7,6 @@ if choice == "1"
 elseif choice == "2"
     importMode=BothYearImport()
 else error("Input should be 1 or 2") end
-abstract type Hook end #allows defining hooks in the code for introspection and data analysis
 for fname in ["chromosome.jl",
               "breed.jl",
               "mutate.jl",
@@ -15,3 +14,4 @@ for fname in ["chromosome.jl",
               "fitness.jl"]
     include(joinpath("GA",fname))
 end
+include("analyse.jl")
