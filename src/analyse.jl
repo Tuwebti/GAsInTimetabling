@@ -22,5 +22,5 @@ meanScore(chrs::ScoredChromosomes) = Statistics.mean( map(chr -> chr.score , chr
 
 displayresults()=_displayresults(iterate_hook_alg)
 function _displayresults(::CollectMeanScore)
-    plot(meanScores,1:length(meanScores))
+    plot(meanScores)
 end

@@ -13,12 +13,10 @@ struct TutorialTimetablingProblem <: TimetablingProblem
     lecturers::Set{Lecturer}
     students::Set{Student}
     classrooms::Dict{Classroom,Int16} #here Int represents classroom size
-    timeslotAmount::Int
     studentEnrollement::StudentEnrollement
 end
 struct SimpleTutorialTimetablingProblem <: TimetablingProblem
     events::Set{Event}
     students::Set{Student}
-    timeslotAmount::Int
     studentEnrollement::StudentEnrollement
 end

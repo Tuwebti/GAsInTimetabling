@@ -13,7 +13,7 @@ function _mutate!(scoredChr::ScoredChromosome, ::SEFMAlg)# Stochastic Event free
     chr=scoredChr.chr
     key=rand(keys(chr))
     maxTime= (0,0)
-    for i in 1:timetablingProblem.timeslotAmount
+    for i in 1:timeslotamount
         chr[key].timePeriod=i
         newFitness=fitness(chr)
         if newFitness> maxTime[2]

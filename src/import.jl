@@ -16,7 +16,7 @@ function _timetableImport(::TestImport)
     events::Set{Event} = Set(["ECM1","ECM2","ECM3","ECM4","ECM5"])
     students::Set{Student} = Set(["Barry","Julie","Charles"])
     studentEnrollement=Dict("Barry" => Set(["ECM2","ECM3"]) , "Julie" => Set(["ECM1","ECM2","ECM5"]) , "Charles" => Set(["ECM3","ECM4","ECM5"]))
-    SimpleTutorialTimetablingProblem(events , students , 3 , studentEnrollement)
+    SimpleTutorialTimetablingProblem(events , students , studentEnrollement)
 end
 function _timetableImport(::BothYearImport)
     events::Set{Event} = Set(["MTH1001","MTH1002","MTH1003","MTH1004","MTH2001","MTH2002","MTH2003","MTH2004"])
@@ -36,7 +36,7 @@ function _timetableImport(::BothYearImport)
         enrolledModules = Year1Modules[map(x -> x=="Yes", [row.MTH2001,row.MTH2002,row.MTH2003,row.MTH2004])] # gives an array of the enrolled modules of a student
         push!(studentEnrollement, studentId => Set(enrolledModules))
     end
-    SimpleTutorialTimetablingProblem(events , students , 3 , studentEnrollement)
+    SimpleTutorialTimetablingProblem(events , students , studentEnrollement)
 end
 
 

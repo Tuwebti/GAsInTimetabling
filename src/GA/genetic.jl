@@ -42,7 +42,7 @@ function _initializePopTutorial(popSize)
     for i in 1:popSize
         chr = Chromosome{SimpleTutorialGene}([])
         for e in timetablingProblem.events
-            chr[e] = SimpleTutorialGene(rand(1:timetablingProblem.timeslotAmount))
+            chr[e] = SimpleTutorialGene(rand(1:timeslotamount))
         end
         push!(Chromosomes,chr)
     end
