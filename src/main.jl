@@ -3,7 +3,7 @@ meanScores=[]
 iterate_hook_alg=CollectMeanScore()
 
 # global variables for which algorithms to use
-timeslotamount=4
+timeslotamount=3
 # execution
 evolution!()
 

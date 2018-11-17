@@ -6,7 +6,7 @@ TODO getconstraints() needs to dispatch on the different possible constraints
 abstract type Constraint end
 
 struct EdgeConstraints <: Constraint
-    edges::Set{Tuple{Event, Event}}
+    edges::Dict{Tuple{Event, Event},Int} #Here Int is equal to the number of clashes
 end
 
 #--------------
@@ -15,32 +15,58 @@ abstract type FitnessAlgorithm end
 struct SimpleFitnessAlg <: FitnessAlgorithm end
 const simpleFitnessAlg = SimpleFitnessAlg()
 
+# The following is used to show a heatmap of the constraints between events, very hackey and needs to be rewritten
+function constraintHook(constraints::EdgeConstraints)
+    for i in 1:length(events)
+        for j in 1:length(events)
+            if haskey(constraints.edges,(events[i],events[j]))
+                clashes[i,j]=constraints.edges[(events[i],events[j])]
+            end
+        end
+    end
+end
 #TODO create different possible algorithms for fitness 
 function initializeFitness(alg::FitnessAlgorithm = simpleFitnessAlg)
     constraints=getConstraints()
+    constraintHook(constraints)
     return chr -> _fitness(chr,constraints,alg)
 end
-
+#Calculate 1/ (1+ num clashes) where num clashes is the total number of clashes. If n students experience a module clash, then that counts as n clashes. here the factor 2 is because we count each pair twice (because a clash (a,b) is a clash (b,a))
 function _fitness(chr::Chromosome{SimpleTutorialGene} , constraints::EdgeConstraints , ::SimpleFitnessAlg)
-    violations = 1
-    for e in constraints.edges
+    violations = 2
+    for (e,clashes) in pairs(constraints.edges)
         if chr[e[1]].timePeriod == chr[e[2]].timePeriod
-            violations += 1
+            violations += clashes
         end
     end
-    return 1/violations
+    return 2/violations
 end
 
 #-------------
 
 function getConstraints()
-    timetablingProblem = timetableImport(importMode)
     _getConstraints(timetablingProblem)
 end
+# record the number of clashes
 function _getConstraints(problem::SimpleTutorialTimetablingProblem)
-    constraints = EdgeConstraints(Set())
+    constraints = EdgeConstraints(Dict())
     for events in values(problem.studentEnrollement)
-        union!(constraints.edges , findPairs(events))
+        for clash in findPairs(events)
+            haskey(constraints.edges,clash) ? constraints.edges[clash]+=1 : constraints.edges[clash] = 1
+        end
+    end
+    # add the clashes (a,b) and (b,a)
+    for (a,b) in keys(constraints.edges)
+        if !haskey(constraints.edges,(b,a))
+            constraints.edges[(b,a)]=0
+        end
+    end
+    transpose=Dict()
+    for ((a,b),i) in pairs(constraints.edges)
+        transpose[(b,a)] = i
+    end
+    for (a,b) in keys(constraints.edges)
+        constraints.edges[(a,b)]+=transpose[(a,b)]
     end
     return constraints
 end
@@ -58,3 +84,5 @@ end
 #------------
 
 const fitness = initializeFitness()
+
+#------------

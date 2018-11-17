@@ -22,5 +22,18 @@ meanScore(chrs::ScoredChromosomes) = Statistics.mean( map(chr -> chr.score , chr
 
 displayresults()=_displayresults(iterate_hook_alg)
 function _displayresults(::CollectMeanScore)
-    plot(meanScores)
+    plot(meanScores, xlabel="iterations" , ylabel="score" , label="mean score")
 end
+
+# The following shows a heatmap of the constraints between events
+function constraintHook(constraints::EdgeConstraints)
+    events=["MTH1001","MTH1002","MTH1003","MTH1004","MTH2001","MTH2002","MTH2003","MTH2004"] #this is a temporary hack, need to make events into vector
+    for i in 1:length(events)
+        for j in 1:length(events)
+            clashes[i,j]=constraints.edges[(events[i],events[j])]
+        end
+    end
+end
+
+
+
