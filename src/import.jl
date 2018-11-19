@@ -36,7 +36,16 @@ function _timetableImport(::BothYearImport)
         enrolledModules = Year1Modules[map(x -> x=="Yes", [row.MTH2001,row.MTH2002,row.MTH2003,row.MTH2004])] # gives an array of the enrolled modules of a student
         push!(studentEnrollement, studentId => Set(enrolledModules))
     end
-    SimpleTutorialTimetablingProblem(events , students , studentEnrollement)
+    studentsByModule=Dict()
+    for event in events
+        studentsByModule[event]=[]
+        for (student,enrolledModules) in pairs(studentEnrollement)
+            if event∈enrolledModules
+                push!(studentsByModule[event],student)
+            end
+        end
+    end
+    SimpleTutorialTimetablingProblem(events , students , studentEnrollement, studentsByModule)
 end
 
 
