@@ -11,10 +11,6 @@ push!(chromosomes::Vector{ScoredChromosome{T}} , chr::Chromosome{T})  where {T} 
 #sort! sorts in reverse so that weakest member is outermost (so that culling is fast)
 sort!(scoredChromosomes::ScoredChromosomes) = sort!(scoredChromosomes, by= x -> getfield(x , :score), alg=InsertionSort, rev=true)
 
-#--------------
-
-timetablingProblem = timetableImport(importMode)
-
 #---------------
 
 #TODO add algList and iteration termination condition arguments

@@ -16,7 +16,7 @@ struct SimpleFitnessAlg <: FitnessAlgorithm end
 const simpleFitnessAlg = SimpleFitnessAlg()
 
 # The following is used to show a heatmap of the constraints between events, very hackey and needs to be rewritten
-function constraintHook(constraints::EdgeConstraints)
+#=function constraintHook(constraints::EdgeConstraints)
     for i in 1:length(events)
         for j in 1:length(events)
             if haskey(constraints.edges,(events[i],events[j]))
@@ -24,6 +24,10 @@ function constraintHook(constraints::EdgeConstraints)
             end
         end
     end
+end
+=#
+function constraintHook(constraints::EdgeConstraints)
+    nothing
 end
 #TODO create different possible algorithms for fitness 
 function initializeFitness(alg::FitnessAlgorithm = simpleFitnessAlg)

@@ -8,6 +8,7 @@ struct TestImport <: ImportMode end
 struct Year1Import <: ImportMode end
 struct Year2Import <: ImportMode end
 struct BothYearImport <: ImportMode end
+struct Data1Import <: ImportMode end
 function timetableImport(importmode=TestImport())
     _timetableImport(importmode)
 end
@@ -36,6 +37,34 @@ function _timetableImport(::BothYearImport)
         enrolledModules = Year1Modules[map(x -> x=="Yes", [row.MTH2001,row.MTH2002,row.MTH2003,row.MTH2004])] # gives an array of the enrolled modules of a student
         push!(studentEnrollement, studentId => Set(enrolledModules))
     end
+    studentsByModule = studentsbymodule(events, students, studentEnrollement)
+    SimpleTutorialTimetablingProblem(events , students , studentEnrollement, studentsByModule)
+end
+function _timetableImport(::Data1Import)
+    lines = readlines(joinpath("data","dataset1.tim"))
+    firstLine = [parse(Int, x) for x in split(lines[1])]
+    eventNumber = firstLine[1]
+    roomNumber = firstLine[2]
+    studentNumber = firstLine[4]
+    events = Set([string(x) for x in 1:eventNumber])
+    students = Set([string(x) for x in 1:studentNumber])
+    studentEnrollement = Dict()
+    for i in 1:studentNumber
+        student = string(i)
+        studentEnrollement[student] = Set()
+        for j in 1:eventNumber
+            event = string(j)
+            index = (i-1)*eventNumber+ j + 1 + roomNumber
+            if lines[index]=="1"
+                push!(studentEnrollement[student] , event)
+            end
+        end
+    end
+    studentsByModule = studentsbymodule(events, students, studentEnrollement)
+    return SimpleTutorialTimetablingProblem(events, students, studentEnrollement, studentsByModule)
+end
+
+function studentsbymodule(events,students,studentEnrollement)
     studentsByModule=Dict()
     for event in events
         studentsByModule[event]=[]
@@ -45,9 +74,8 @@ function _timetableImport(::BothYearImport)
             end
         end
     end
-    SimpleTutorialTimetablingProblem(events , students , studentEnrollement, studentsByModule)
+    return studentsByModule
 end
-
 
 
 
