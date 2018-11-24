@@ -9,11 +9,12 @@ elseif choice == "2"
     timeslotamount=3
 elseif choice == "3"
     timeslotamount=45
+    chromosomes = evolution!(30,20000,true)
 end
 
 
 # execution
-evolution!()
+
 
 # Data display
 displayresults()

@@ -14,9 +14,9 @@ sort!(scoredChromosomes::ScoredChromosomes) = sort!(scoredChromosomes, by= x -> 
 #---------------
 
 #TODO add algList and iteration termination condition arguments
-function evolution!(popSize::Int=5)
+function evolution!(popSize::Int=5, iterationSteps=1000, earlyStop=true)
     chromosomes=initializePop(popSize)
-    iterateEvolution!(chromosomes, simpleAlg)
+    iterateEvolution!(chromosomes, iterationSteps, earlyStop, simpleAlg)
     endHook(chromosomes)
     return chromosomes
 end
@@ -53,11 +53,16 @@ const simpleAlg = SimpleAlg()
 
 
 #TODO chang for loop to while and add an argument to specify an iteration condition
-function iterateEvolution!(chromosomes, alg::EvolutionAlg = simpleAlg)
-    _iterateEvolution!(chromosomes, alg)
+function iterateEvolution!(chromosomes, iterationSteps, earlyStop, alg::EvolutionAlg = simpleAlg)
+    _iterateEvolution!(chromosomes, iterationSteps, earlyStop, alg)
 end
-function _iterateEvolution!(chromosomes, ::SimpleAlg)
-    for i in 1:300
+function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, ::SimpleAlg)
+    for i in 1:iterationSteps
+        if earlyStop
+            if meanScore(chromosomes) > 0.98
+                break
+            end
+        end
         selectCulling!(chromosomes, simple_select_culling_alg)
         selectMutation!(chromosomes, simple_select_mutation_alg)
         selectBreeding!(chromosomes, simple_select_breeding_alg)

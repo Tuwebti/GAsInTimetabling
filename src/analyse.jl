@@ -18,7 +18,7 @@ iterateHook(chr::ScoredChromosomes,i::Int)=iterateHook(chr,i,iterate_hook_alg::I
 function iterateHook(chrs::ScoredChromosomes,i::Int,::CollectMeanScore)
     push!(meanScores, meanScore(chrs))
 end
-meanScore(chrs::ScoredChromosomes) = Statistics.mean( map(chr -> chr.score , chrs) )
+
 
 displayresults()=_displayresults(iterate_hook_alg)
 function _displayresults(::CollectMeanScore)
