@@ -13,8 +13,8 @@ end
 
 abstract type FitnessAlgorithm end
 struct SimpleFitnessAlg <: FitnessAlgorithm end
+struct GroupFitnessAlg <: FitnessAlgorithm end
 const simpleFitnessAlg = SimpleFitnessAlg()
-
 # The following enables us to construct a heatmap of the clashes
 function constraintHook(constraints::EdgeConstraints)
     for i in 1:length(events)
