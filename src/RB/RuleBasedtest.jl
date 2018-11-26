@@ -5,7 +5,7 @@
 #(1) number of slots against no. of students assigned
 #(2) bipartite connections
 
-noSlots = 4
+noSlots = 45
 slotsFree = zeros(noSlots)
 timeSlots = zeros(noSlots)
 #D = Dict([("M3", ["1","4"]), ("M2", ["2","5"]), ("M1", ["3","4","5"])])
@@ -49,7 +49,7 @@ for event in keys(studentsByModule)
     end
 end
 #print modulesByTimeslot in order
-for key in sort(collect(keys(modulesByTimeslot)))
+for key in map(x->string(x), sort(map(x->parse(Int, x), collect(keys(modulesByTimeslot)))))
     print("timeslot " * key * " : ")
     show(sort(collect(modulesByTimeslot[key])))
     println()
