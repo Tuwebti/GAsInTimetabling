@@ -5,6 +5,7 @@
 #(1) number of slots against no. of students assigned
 #(2) bipartite connections
 
+<<<<<<< HEAD
 function DeterminsticMain()
     noSlots = 55
     slotsFree = zeros(noSlots)
@@ -14,6 +15,27 @@ function DeterminsticMain()
     modulesByTimeslot = Dict{String,Set{Event}}()
     timeSlotAvailableTEMP = Dict{String,Set{Event}}()
     #Initialise timeslots
+=======
+noSlots = 45
+slotsFree = zeros(noSlots)
+timeSlots = zeros(noSlots)
+#D = Dict([("M3", ["1","4"]), ("M2", ["2","5"]), ("M1", ["3","4","5"])])
+studentsByModule = timetablingProblem.studentsByModule
+studentsByTimeslot = Dict{String,Set{Student}}()
+modulesByTimeslot = Dict{String,Set{Event}}()
+timeSlotAvailableTEMP = Dict{String,Set{Event}}()
+#Initialise timeslots
+for i in 1:noSlots
+    timeslot = string(i)
+    studentsByTimeslot[timeslot] = Set()
+    modulesByTimeslot[timeslot] = Set()
+end
+
+for event in keys(studentsByModule)
+    #TODO implement Will's hierarchal algorithm for each iteration, basically
+    #selects the module being considered in this iteration
+    #Initialise timeslots available for current event
+>>>>>>> 53e644a6b1dfede9a214be53f5fd24ab5cdf09e9
     for i in 1:noSlots
         timeslot = string(i)
         studentsByTimeslot[timeslot] = Set()
@@ -48,6 +70,7 @@ function DeterminsticMain()
             end
         end
     end
+<<<<<<< HEAD
     #print modulesByTimeslot in order, and counts modules and students
     noStudentsAssigned = 0
     noModulesAssigned = 0
@@ -61,4 +84,12 @@ function DeterminsticMain()
         println()
     end
     #count the amount of students & modules
+=======
+end
+#print modulesByTimeslot in order
+for key in map(x->string(x), sort(map(x->parse(Int, x), collect(keys(modulesByTimeslot)))))
+    print("timeslot " * key * " : ")
+    show(sort(collect(modulesByTimeslot[key])))
+    println()
+>>>>>>> 53e644a6b1dfede9a214be53f5fd24ab5cdf09e9
 end
