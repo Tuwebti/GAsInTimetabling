@@ -1,6 +1,7 @@
 #TODO find a way to order dictionaries linearly
 #TODO using a variable timeslots, intialise dictionaries
 #TODO create an array which tells you which slots are free for a given module
+#TODO create an array for bipartite connections, make plots
 noSlots = 4
 slotsFree = zeros(noSlots)
 timeSlots = zeros(noSlots)
