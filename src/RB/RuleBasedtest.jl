@@ -1,45 +1,56 @@
-#TODO find a way to order dictionaries linearly
-#TODO using a variable timeslots, intialise dictionaries
 #TODO create an array which tells you which slots are free for a given module
 #TODO create an array for bipartite connections, make plots
+#TODO implement rooms size constraint
+#TODO GRAPHS:
+#(1) number of slots against no. of students assigned
+#(2) bipartite connections
+
 noSlots = 4
 slotsFree = zeros(noSlots)
 timeSlots = zeros(noSlots)
 #D = Dict([("M3", ["1","4"]), ("M2", ["2","5"]), ("M1", ["3","4","5"])])
-D = timetablingProblem.studentsByModule
-timtST = Dict{String,Array{String,1}}("Tc" => [],"Tb"=>[],"Ta"=>[],"Tl"=>[])
-timtM = Dict{String,Array{String,1}}("Tc" => [],"Tb"=>[],"Ta"=>[],"Tl"=>[])
-#counts down letters and numbers
-for modu1 in keys(D)
+studentsByModule = timetablingProblem.studentsByModule
+studentsByTimeslot = Dict{String,Set{Student}}()
+modulesByTimeslot = Dict{String,Set{Event}}()
+timeSlotAvailableTEMP = Dict{String,Set{Event}}()
+#Initialise timeslots
+for i in 1:noSlots
+    timeslot = string(i)
+    studentsByTimeslot[timeslot] = Set()
+    modulesByTimeslot[timeslot] = Set()
+end
+
+for event in keys(studentsByModule)
     #TODO implement Will's hierarchal algorithm for each iteration, basically
     #selects the module being considered in this iteration
-
-    #slotsFree finds the possible slots available for module modu1
-    slotsFree = Dict{String,Array{String}}("Tc" => [],"Tb"=>[],"Ta"=>[])
-    for T in keys(timtST)
-        #initialise inbedded variables for Timeslot T
-        noclash = 1
-        for k in get(D,modu1,0)
-            if k in get(timtST,T,0)
-                #here we have: 1 student (k) shares the same timeslot T for a
-                #different module (!= modu1)
-                noclash = 0
-                break
-                #BREAK to next timeslot
-            end
+    #Initialise timeslots available for current event
+    for i in 1:noSlots
+        timeslot = string(i)
+        timeSlotAvailableTEMP[timeslot] = Set()
+    end
+    #Iterate through timeslots
+    for timeslot in keys(studentsByTimeslot)
+        if  ! isempty(intersect(studentsByModule[event], studentsByTimeslot[timeslot]))
+            #we have a clash
+        else
+            #add event to available timeslot
+            #calculate soft constraint score here
+            union!(timeSlotAvailableTEMP[timeslot],[event])
         end
-        if noclash == 1
-            #assign timeslot T, module modu1
-            #Places module modu1 into first possible timeslot T
-            #print(modu1,"\n")
-            #print(T,"\n")
-            timtST[T] = append!(timtST[T],get(D,modu1,0))
-            timtM[T] = append!(timtM[T],[modu1])
+    end
+    #Soft Constraints, searches through available timeslots and scores them
+    #then chooses most preferrable timeSlot
+    for availableSlot in sort(collect(keys(timeSlotAvailableTEMP)))
+        if ! isempty(get(timeSlotAvailableTEMP,availableSlot,0))
+            union!(modulesByTimeslot[availableSlot],[event])
+            union!(studentsByTimeslot[availableSlot],studentsByModule[event])
             break
         end
     end
-    #can place module modu1 in potential timeslots listed, soft constraints can be
-    #applied here
 end
-#print(timtST,"\n")
-print(timtM)
+#print modulesByTimeslot in order
+for key in sort(collect(keys(modulesByTimeslot)))
+    print("timeslot " * key * " : ")
+    show(sort(collect(modulesByTimeslot[key])))
+    println()
+end
