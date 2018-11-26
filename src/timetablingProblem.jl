@@ -19,4 +19,6 @@ struct SimpleTutorialTimetablingProblem <: TimetablingProblem
     events::Set{Event}
     students::Set{Student}
     studentEnrollement::StudentEnrollement
+    studentsByModule::Dict{Event,Vector{Student}}
 end
+

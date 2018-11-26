@@ -13,9 +13,9 @@ end
 
 abstract type FitnessAlgorithm end
 struct SimpleFitnessAlg <: FitnessAlgorithm end
+struct GroupFitnessAlg <: FitnessAlgorithm end
 const simpleFitnessAlg = SimpleFitnessAlg()
-
-# The following is used to show a heatmap of the constraints between events, very hackey and needs to be rewritten
+# The following enables us to construct a heatmap of the clashes
 function constraintHook(constraints::EdgeConstraints)
     for i in 1:length(events)
         for j in 1:length(events)
@@ -25,6 +25,7 @@ function constraintHook(constraints::EdgeConstraints)
         end
     end
 end
+
 #TODO create different possible algorithms for fitness 
 function initializeFitness(alg::FitnessAlgorithm = simpleFitnessAlg)
     constraints=getConstraints()
