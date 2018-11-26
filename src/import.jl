@@ -76,6 +76,3 @@ function studentsbymodule(events,students,studentEnrollement)
     end
     return studentsByModule
 end
-
-
-
