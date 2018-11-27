@@ -6,7 +6,7 @@
 #(2) bipartite connections
 
 function DeterminsticMain()
-    noSlots = 55
+    noSlots = timeslotamount
     slotsFree = zeros(noSlots)
     timeSlots = zeros(noSlots)
     studentsByModule = timetablingProblem.studentsByModule

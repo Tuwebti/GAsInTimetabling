@@ -13,10 +13,15 @@ sort!(scoredChromosomes::ScoredChromosomes) = sort!(scoredChromosomes, by= x -> 
 
 #---------------
 
-#TODO add algList and iteration termination condition arguments
-function evolution!(popSize::Int=5, iterationSteps=1000, earlyStop=true)
+function evolution!(popSize::Int, iterationSteps, earlyStop, saveFile, iterateAlg)
     chromosomes=initializePop(popSize)
-    iterateEvolution!(chromosomes, iterationSteps, earlyStop, simpleAlg)
+    return continueEvolution(chromosomes, iterationSteps, earlyStop, saveFile, iterateAlg)
+end
+
+#---------------
+
+function continueEvolution(chromosomes, iterationSteps, earlyStop, saveFile, iterateAlg)
+    iterateEvolution!(chromosomes, iterationSteps, earlyStop, saveFile, iterateAlg)
     endHook(chromosomes)
     return chromosomes
 end
@@ -53,10 +58,10 @@ const simpleAlg = SimpleAlg()
 
 
 #TODO chang for loop to while and add an argument to specify an iteration condition
-function iterateEvolution!(chromosomes, iterationSteps, earlyStop, alg::EvolutionAlg = simpleAlg)
-    _iterateEvolution!(chromosomes, iterationSteps, earlyStop, alg)
+function iterateEvolution!(chromosomes, iterationSteps, earlyStop, saveFile, alg::EvolutionAlg = simpleAlg)
+    _iterateEvolution!(chromosomes, iterationSteps, earlyStop, saveFile, alg)
 end
-function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, ::SimpleAlg)
+function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, ::SimpleAlg)
     for i in 1:iterationSteps
         if earlyStop
             if meanScore(chromosomes) > 0.98
@@ -66,7 +71,7 @@ function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, ::SimpleAlg
         selectCulling!(chromosomes, simple_select_culling_alg)
         selectMutation!(chromosomes, simple_select_mutation_alg)
         selectBreeding!(chromosomes, simple_select_breeding_alg)
-        iterateHook(chromosomes, i)
+        iterateHook(chromosomes, i, iterationSteps, saveFile)
     end
     return chromosomes
 end
@@ -118,5 +123,5 @@ end
 
 #default empty implementation for hooks
 beginHook(_)= nothing
-iterateHook(_,_)= nothing
+iterateHook(_,_,_)= nothing
 endHook(_)= nothing
