@@ -83,9 +83,9 @@ function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, :
                 break
             end
         end
-        selectCulling!(chromosomes, simple_select_culling_alg)
+        selectCulling!(chromosomes, Scalable_select_culling_alg())
         selectMutation!(chromosomes, Many_select_mutation_alg())
-        selectBreeding!(chromosomes, simple_select_breeding_alg)
+        selectBreeding!(chromosomes, Scalable_breeding_alg())
         iterateHook(chromosomes, i, iterationSteps, saveFile)
     end
     return chromosomes
@@ -121,6 +121,7 @@ end
 
 abstract type Select_breeding_alg end
 struct Simple_select_breeding_alg <: Select_breeding_alg end
+struct Scalable_breeding_alg <: Select_breeding_alg end
 const simple_select_breeding_alg = Simple_select_breeding_alg()
 
 function selectBreeding!(scoredChromosomes, alg::Select_breeding_alg = simple_select_breeding_alg)
@@ -133,6 +134,16 @@ function _selectBreeding!(scoredChromosomes, ::Simple_select_breeding_alg)
     chr=breed(weightedRand(scoredChromosomes).chr,weightedRand(scoredChromosomes).chr)
     push!(scoredChromosomes,chr)
 end
+function _selectBreeding!(scoredChromosomes, ::Scalable_breeding_alg)
+    function weightedRand(scoredChromosomes)
+        i=trunc(Int, rand()^2 * length(scoredChromosomes))+1
+        return scoredChromosomes[i]
+    end
+    for i in 1:max(1,trunc(Int,0.1*length(scoredChromosomes)))
+        chr=breed(weightedRand(scoredChromosomes).chr,weightedRand(scoredChromosomes).chr)
+        push!(scoredChromosomes,chr)
+    end
+end
 
 
 #---------------
@@ -140,6 +151,7 @@ end
 abstract type Select_culling_alg <: Algorithm end
 struct Simple_select_culling_alg <: Select_culling_alg end
 const simple_select_culling_alg = Simple_select_culling_alg()
+struct Scalable_select_culling_alg <: Select_culling_alg end
 function selectCulling!(chromosomes, alg::Select_culling_alg = simple_select_culling_alg)
     _selectCulling!(chromosomes, alg)
 end
@@ -147,6 +159,12 @@ end
 function _selectCulling!(chromosomes, ::Simple_select_culling_alg)
     pop!(chromosomes)
 end
+function _selectCulling!(chromosomes, ::Scalable_select_culling_alg)
+    for i in 1:max(1,trunc(Int,0.1*length(chromosomes)))
+        pop!(chromosomes)
+    end
+end
+
 
 
 #default empty implementation for hooks
