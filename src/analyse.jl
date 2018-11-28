@@ -12,12 +12,12 @@ abstract type AnalyseState end #a variable of type AnalyseState collects informa
 #beginHook is called just after the population of chromosomes is initialized
 
 #iterateHook is called at each iteration of iterateEvolution!
-iterateHook(chr::ScoredChromosomes,i::Int,saveFile, iterationSteps::Int)=iterateHook(chr,i,iterationSteps,saveFile, iterate_hook_alg::IteratehookAlg)
+iterateHook(chr::ScoredChromosomes,i::Int, iterationSteps::Int,saveFile)=iterateHook(chr,i,iterationSteps,saveFile, iterate_hook_alg::IteratehookAlg)
 function iterateHook(chrs::ScoredChromosomes,i::Int,iterationSteps,saveFile,::CollectMeanScore)
     push!(meanScores, meanScore(chrs))
     if i%100==0
         println(string((i/iterationSteps)*100) * "% complete")
-        save(joinpath("saved-variables",saveFile),"chromosomes",chromosomes,"meanScores",meanScores)
+        save(joinpath("saved-variables",saveFile),"chromosomes",chrs,"meanScores",meanScores)
     end
 end
 

@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+#TODO create an array for bipartite connections, make plots
+#TODO implement rooms size constraint
+#TODO implement a clique/degree strategy? Then retimetable those modules
+#TODO GRAPHS:
+#(1) number of slots against no. of students assigned
+#(2) bipartite connections
+
+>>>>>>> 9f90e268793ea94ca005f7fa634d8d64e3bf6179
 function DeterminsticMain()
     #TODO implement rooms size constraint
 
