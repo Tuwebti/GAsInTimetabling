@@ -5,7 +5,9 @@ for fname in ["chromosome.jl",
               "breed.jl",
               "mutate.jl",
               "genetic.jl",
-              "fitness.jl"]
+              "fitness.jl",
+              "algorithms.jl"]
     include(joinpath("GA",fname))
 end
 include("analyse.jl")
+using JLD
