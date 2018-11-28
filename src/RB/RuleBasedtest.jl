@@ -5,12 +5,8 @@
 #(1) number of slots against no. of students assigned
 #(2) bipartite connections
 
-<<<<<<< HEAD
-function DeterminsticMain(noSlots)
-=======
 function DeterminsticMain()
     noSlots = timeslotamount
->>>>>>> bdb0551b4e062768edfbbc9f46ecc45428934fb1
     slotsFree = zeros(noSlots)
     timeSlots = zeros(noSlots)
     studentsByModule = timetablingProblem.studentsByModule
@@ -78,4 +74,6 @@ function DeterminsticMain()
     println("Number of Modules Unassigned: ",noModulesUnassigned)
     return modulesByTimeslot
 end
-modulesByTimeslot = DeterminsticMain(55)
+
+#Optimum timeslots for competition data
+modulesByTimeslot = DeterminsticMain()
