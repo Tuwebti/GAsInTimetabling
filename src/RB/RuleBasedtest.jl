@@ -72,5 +72,5 @@ function DeterminsticMain()
     #print the amount of modules unassigned for dataset 1
     noModulesUnassigned = 400-noModulesAssigned
     println("Number of Modules Unassigned: ",noModulesUnassigned)
-    return modulesByTimeslot
+    return (modulesByTimeslot,0)
 end

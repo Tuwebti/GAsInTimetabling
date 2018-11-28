@@ -2,6 +2,7 @@
 
 abstract type MutateAlgorithm end
 struct SEFMAlg <: MutateAlgorithm end #Stochastic Event freeing mutation
+struct RandAlg <: MutateAlgorithm end
 const SEFM = SEFMAlg()
 
 #-------------------
@@ -12,6 +13,30 @@ end
 function _mutate!(scoredChr::ScoredChromosome, ::SEFMAlg)# Stochastic Event freeing mutation
     chr=scoredChr.chr
     key=rand(keys(chr))
+    scoredChr.chr = sefm(chr,key)
+    scoredChr.score = fitness(scoredChr.chr)
+    return scoredChr
+end
+#randomly mutate 10% of chromosomes. of these, mutate half with SEFM and half randomly
+function _mutate!(scoredChr, ::RandAlg)
+    chr = scoredChr.chr
+    for key in keys(chr)
+        if rand() > 0.9
+            if rand() > 0.5
+                chr = sefm(chr,key)
+            else
+                chr[key].timePeriod=rand(1:timeslotamount)
+            end
+        end
+    end
+    scoredChr.score = fitness(scoredChr.chr)
+end
+
+
+
+
+
+function sefm(chr,key)
     maxTime= (0,0)
     for i in 1:timeslotamount
         chr[key].timePeriod=i
@@ -21,5 +46,5 @@ function _mutate!(scoredChr::ScoredChromosome, ::SEFMAlg)# Stochastic Event free
         end
     end
     chr[key].timePeriod=maxTime[1]
-    scoredChr.score=maxTime[2]
+    return chr
 end

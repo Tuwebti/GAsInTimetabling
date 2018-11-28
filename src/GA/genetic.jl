@@ -54,6 +54,7 @@ end
 
 abstract type EvolutionAlg <: Algorithm end
 struct SimpleAlg <: EvolutionAlg end
+struct ScalableAlg <: EvolutionAlg end
 const simpleAlg = SimpleAlg()
 
 
@@ -75,11 +76,27 @@ function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, :
     end
     return chromosomes
 end
+function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, ::ScalableAlg)
+    for i in 1:iterationSteps
+        if earlyStop
+            if meanScore(chromosomes) > 0.98
+                break
+            end
+        end
+        selectCulling!(chromosomes, simple_select_culling_alg)
+        selectMutation!(chromosomes, Many_select_mutation_alg())
+        selectBreeding!(chromosomes, simple_select_breeding_alg)
+        iterateHook(chromosomes, i, iterationSteps, saveFile)
+    end
+    return chromosomes
+end
+
 
 #--------------
 
 abstract type Select_mutation_alg <: Algorithm end
 struct Simple_select_mutation_alg <: Select_mutation_alg end
+struct Many_select_mutation_alg <: Select_mutation_alg end
 const simple_select_mutation_alg = Simple_select_mutation_alg()
 function selectMutation!(scoredChromosomes , alg::Select_mutation_alg = simple_select_mutation_alg)
     _selectMutation!(scoredChromosomes, alg)
@@ -88,6 +105,17 @@ function _selectMutation!(scoredChromosomes,::Simple_select_mutation_alg)
     scoredChr=rand(scoredChromosomes)
     mutate!(scoredChr)
 end
+#potentially mutate any chromosome, with more likelyhood of mutating the worst, with a 0.35 chance of mutating the worst one
+function _selectMutation!(scoredChromosomes,::Many_select_mutation_alg)
+    popSize = length(scoredChromosomes)
+    for (i,scoredChr) in enumerate(scoredChromosomes)
+        if 1- (i/popSize)*0.35 < rand()
+            mutate!(scoredChr, RandAlg())
+        end
+    end
+end
+
+
 
 #---------------
 
@@ -123,5 +151,5 @@ end
 
 #default empty implementation for hooks
 beginHook(_)= nothing
-iterateHook(_,_,_)= nothing
+iterateHook(_,_,_,_)= nothing
 endHook(_)= nothing

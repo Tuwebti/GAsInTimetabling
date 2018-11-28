@@ -9,5 +9,3 @@ for fname in ["chromosome.jl",
               "algorithms.jl"]
     include(joinpath("GA",fname))
 end
-include("analyse.jl")
-using JLD
