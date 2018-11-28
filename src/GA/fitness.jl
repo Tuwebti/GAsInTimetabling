@@ -32,15 +32,20 @@ function initializeFitness(alg::FitnessAlgorithm = simpleFitnessAlg)
     constraintHook(constraints)
     return chr -> _fitness(chr,constraints,alg)
 end
-#Calculate 1/ (1+ num clashes) where num clashes is the total number of clashes. If n students experience a module clash, then that counts as n clashes. here the factor 2 is because we count each pair twice (because a clash (a,b) is a clash (b,a))
+#Calculate 1/ (1+ num clashes) where num clashes is the total number of clashes.
 function _fitness(chr::Chromosome{SimpleTutorialGene} , constraints::EdgeConstraints , ::SimpleFitnessAlg)
-    violations = 2
-    for (e,clashes) in pairs(constraints.edges)
+    return 1/ (1 + clashAmount(chr, constraints.edges))
+end
+
+# If n students experience a module clash, then that counts as n clashes. here the factor 2 is because we count each pair twice (because a clash (a,b) is a clash (b,a))
+function clashAmount(chr::Chromosome , edges)
+    violations = 0
+    for (e,clashes) in pairs(edges)
         if chr[e[1]].timePeriod == chr[e[2]].timePeriod
             violations += clashes
         end
     end
-    return 2/violations
+    return violations / 2
 end
 
 #-------------
