@@ -84,17 +84,10 @@ function DeterminsticMain()
         show(sort(collect(modulesByTimeslot[key])))
         println()
     end
-<<<<<<< HEAD
 
     #DISPLAY UNASSIGNED MODULES
     println("Number of Modules Unassigned: ",length(unassignedModules))
 
     #Returns pair of Modules by timeslot and unassigend Modules
     return (modulesByTimeslot,unassignedModules)
-=======
-    #print the amount of modules unassigned for dataset 1
-    noModulesUnassigned = 400-noModulesAssigned
-    println("Number of Modules Unassigned: ",noModulesUnassigned)
-    return (modulesByTimeslot,0)
->>>>>>> fc22a59624ada5fd570c30993b209823ec0cae30
 end
