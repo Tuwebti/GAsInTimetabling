@@ -1,19 +1,18 @@
-#TODO create an array for bipartite connections, make plots
-#TODO implement rooms size constraint
-#TODO implement a clique/degree strategy? Then retimetable those modules
-#TODO GRAPHS:
-#(1) number of slots against no. of students assigned
-#(2) bipartite connections
-
 function DeterminsticMain()
+    #TODO implement rooms size constraint
+
+    #Initial variables
+    modulesAllAssigned = false
     noSlots = timeslotamount
     slotsFree = zeros(noSlots)
     timeSlots = zeros(noSlots)
-    studentsByModule = timetablingProblem.studentsByModule
+    studentsByModule = copy(timetablingProblem.studentsByModule)
     studentsByTimeslot = Dict{String,Set{Student}}()
     modulesByTimeslot = Dict{String,Set{Event}}()
     timeSlotAvailableTEMP = Dict{String,Set{Event}}()
     roomAvailability = Dict{String,Set{Event}}()
+    unassignedModules = []
+    lengthOfKeys = length(collect(keys(studentsByModule)))
     #Initialise timeslots
     for i in 1:noSlots
         timeslot = string(i)
@@ -21,20 +20,31 @@ function DeterminsticMain()
         modulesByTimeslot[timeslot] = Set()
         #roomAvailability[timeslot] = =Set()
     end
-
-    for event in keys(studentsByModule)
-        #TODO implement Will's hierarchal algorithm for each iteration, basically
-        #selects the module being considered in this iteration
-        #Initialise timeslots available for current event
+    #ASSIGN MODULES INTO TIMESLOTS
+    while !modulesAllAssigned
+        #Display Progress
+        currentLength = length(collect(keys(studentsByModule)))
+        println(((lengthOfKeys-currentLength)/lengthOfKeys)*100,"% Progress")
+        #signif(73489, 3)?
+        #Check if no more modules need to be assigned
+        if length(collect(keys(studentsByModule))) <= 1
+            #End cases, just selects last event
+            modulesAllAssigned = true
+            event = collect(keys(studentsByModule))[1]
+        else
+            #Select most constrained module For ActualEvent
+            event = mostConstrainedModule(studentsByModule)
+        end
+        #Initialise timeslots available for each iterate
         for i in 1:noSlots
             timeslot = string(i)
             timeSlotAvailableTEMP[timeslot] = Set()
         end
         #Iterate through timeslots
-        for timeslot in sort(collect(keys(studentsByTimeslot)))
-            if  ! isempty(intersect(studentsByModule[event], studentsByTimeslot[timeslot]))
-                #we have a clash
-            else
+        foundSlot = false
+        for timeslot in map(x -> string(x),sort(map(x -> parse(Int, x), collect(keys(modulesByTimeslot)))))
+            if isempty(intersect(studentsByModule[event], studentsByTimeslot[timeslot]))
+                #ROOM CONSTRAINT
                 #roomChecker = Array{Int64}
                 #for roomSize in get(roomAvailability,timeslot,0)
                     #check if room size is available for module
@@ -45,12 +55,17 @@ function DeterminsticMain()
                 #end
                 #at end of loop we assign module to smallest room
 
-                #add event to available timeslot
+                #MODULE CLASH CONSTRAINT
                 union!(timeSlotAvailableTEMP[timeslot],[event])
-                #SOFT CONSTRAINT HERE
+                foundSlot = true
+                #SOFT CONSTRAINT SCORE HERE
             end
         end
-        #Soft Constraints FIX
+        #Condtion for Unassigned Modules
+        if !foundSlot
+            push!(unassignedModules,event)
+        end
+        #SOFT CONSTRAINTS APPLIED
         for availableSlot in sort(collect(keys(timeSlotAvailableTEMP)))
             if ! isempty(get(timeSlotAvailableTEMP,availableSlot,0))
                 union!(modulesByTimeslot[availableSlot],[event])
@@ -58,19 +73,28 @@ function DeterminsticMain()
                 break
             end
         end
-    end
-    #print modulesByTimeslot in order, and counts modules
-    noModulesAssigned = 0
+
+        #REMOVE MODULE HERE
+        delete!(studentsByModule,event)
+    end     #TIMETABLE PRODUCED
+
+    #DISPLAY TIMETABLE
     for key in map(x -> string(x),sort(map(x -> parse(Int, x), collect(keys(modulesByTimeslot)))))
         print("timeslot " * key * " : ")
         show(sort(collect(modulesByTimeslot[key])))
-        #count the amount of students
-        noModulesAssigned += length(get(modulesByTimeslot,key,0))
-        #count the amount of modules
         println()
     end
+<<<<<<< HEAD
+
+    #DISPLAY UNASSIGNED MODULES
+    println("Number of Modules Unassigned: ",length(unassignedModules))
+
+    #Returns pair of Modules by timeslot and unassigend Modules
+    return (modulesByTimeslot,unassignedModules)
+=======
     #print the amount of modules unassigned for dataset 1
     noModulesUnassigned = 400-noModulesAssigned
     println("Number of Modules Unassigned: ",noModulesUnassigned)
     return (modulesByTimeslot,0)
+>>>>>>> fc22a59624ada5fd570c30993b209823ec0cae30
 end
