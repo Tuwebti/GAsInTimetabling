@@ -3,6 +3,7 @@
 abstract type MutateAlgorithm end
 struct SEFMAlg <: MutateAlgorithm end #Stochastic Event freeing mutation
 struct RandAlg <: MutateAlgorithm end
+struct FullRandAlg <: MutateAlgorithm end
 const SEFM = SEFMAlg()
 
 #-------------------
@@ -32,6 +33,12 @@ function _mutate!(scoredChr, ::RandAlg)
     scoredChr.score = fitness(scoredChr.chr)
 end
 
+function _mutate!(scoredChr, ::FullRandAlg)
+    chr = scoredChr.chr
+    key=rand(keys(chr))
+    chr[key].timePeriod=rand(1:timeslotamount)
+    scoredChr.score = fitness(scoredChr.chr)
+end
 
 
 

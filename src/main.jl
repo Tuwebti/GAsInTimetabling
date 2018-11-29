@@ -1,5 +1,5 @@
 function algChoice()
-    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg \n 3 GreedyScalableAlg")
+    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg \n 3 GreedyScalableAlg \n 4 VariableScalableAlg ")
     algChoice = readline(stdin)
     if algChoice == "1"
         alg = simpleAlg
@@ -7,6 +7,8 @@ function algChoice()
         alg = ScalableAlg()
     elseif algChoice == "3"
         alg = GreedyScalableAlg()
+    elseif algChoice == "4"
+        alg = AlternatingScalableAlg()
     end
     return alg
 end
