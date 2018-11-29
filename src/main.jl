@@ -31,10 +31,12 @@ if !initializeChoice
     println("")
     println("earlyStop ? y/n :")
     earlyStop = readline(stdin) == "y"
-    println("Which algorithm ? : \n 1 simpleAlg ")
+    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg")
     algChoice = readline(stdin)
     if algChoice == "1"
         alg = simpleAlg
+    elseif algChoice == "2"
+        alg = ScalableAlg()
     end
     println("")
     println("file name :")
@@ -52,10 +54,12 @@ else
     println("")
     println("earlyStop ? y/n :")
     earlyStop = readline(stdin) == "y"
-    println("Which algorithm ? : \n 1 simpleAlg ")
+    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg")
     algChoice = readline(stdin)
     if algChoice == "1"
         alg = simpleAlg
+    elseif algchoice == "2"
+        alg = ScalableAlg()
     end
     chromosomes = continueEvolution(chromosomes, iterationSteps, earlyStop, saveFile, alg)
 end
