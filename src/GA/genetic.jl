@@ -55,6 +55,9 @@ end
 abstract type EvolutionAlg <: Algorithm end
 struct SimpleAlg <: EvolutionAlg end
 struct ScalableAlg <: EvolutionAlg end
+struct VariableAlg <: EvolutionAlg end
+struct GreedyScalableAlg <: EvolutionAlg end
+struct AlternatingScalableAlg <: EvolutionAlg end
 const simpleAlg = SimpleAlg()
 
 
@@ -90,6 +93,36 @@ function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, :
     end
     return chromosomes
 end
+function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, ::GreedyScalableAlg)
+    for i in 1:iterationSteps
+        if earlyStop
+            if meanScore(chromosomes) > 0.98
+                break
+            end
+        end
+        selectCulling!(chromosomes, Scalable_select_culling_alg())
+        selectMutation!(chromosomes, GreedyScalable_select_mutation_alg())
+        selectBreeding!(chromosomes, Scalable_breeding_alg())
+        iterateHook(chromosomes, i, iterationSteps, saveFile)
+    end
+    return chromosomes
+end
+function _iterateEvolution!(chromosomes,  iterationSteps, earlyStop, saveFile, ::AlternatingScalableAlg)
+    for i in 1:iterationSteps
+        if earlyStop
+            if meanScore(chromosomes) > 0.98
+                break
+            end
+        end
+        greedyFlag = (div(i,50) % 5) != 9
+        selectCulling!(chromosomes,0.05, Scalable_select_culling_alg())
+        selectMutation!(chromosomes,0.05,greedyFlag, AlternateScalable_select_mutation_alg())
+        selectBreeding!(chromosomes,0.05, Scalable_breeding_alg())
+        iterateHook(chromosomes, i, iterationSteps, saveFile)
+    end
+    return chromosomes
+end
+
 
 
 #--------------
@@ -97,6 +130,8 @@ end
 abstract type Select_mutation_alg <: Algorithm end
 struct Simple_select_mutation_alg <: Select_mutation_alg end
 struct Many_select_mutation_alg <: Select_mutation_alg end
+struct GreedyScalable_select_mutation_alg <: Select_mutation_alg end
+struct AlternateScalable_select_mutation_alg <: Select_mutation_alg end
 const simple_select_mutation_alg = Simple_select_mutation_alg()
 function selectMutation!(scoredChromosomes , alg::Select_mutation_alg = simple_select_mutation_alg)
     _selectMutation!(scoredChromosomes, alg)
@@ -114,7 +149,27 @@ function _selectMutation!(scoredChromosomes,::Many_select_mutation_alg)
         end
     end
 end
+function _selectMutation!(scoredChromosomes,::GreedyScalable_select_mutation_alg)
+    popSize = length(scoredChromosomes)
+    for (i,scoredChr) in enumerate(scoredChromosomes)
+        if 1- (i/popSize)*0.35 < rand()
+            mutate!(scoredChr, SEFMAlg())
+        end
+    end
+end
 
+function selectMutation!(scoredChromosomes,mutatePercent,greedyFlag,::AlternateScalable_select_mutation_alg)
+    popSize = length(scoredChromosomes)
+    for (i,scoredChr) in enumerate(scoredChromosomes)
+        if 1- (i/popSize)*mutatePercent < rand()
+            if greedyFlag
+                mutate!(scoredChr, SEFMAlg())
+            else
+                mutate!(scoredChr, FullRandAlg())
+            end
+        end
+    end
+end
 
 
 #---------------
@@ -145,6 +200,16 @@ function _selectBreeding!(scoredChromosomes, ::Scalable_breeding_alg)
     end
 end
 
+function selectBreeding!(scoredChromosomes,percentChange, ::Scalable_breeding_alg)
+    function weightedRand(scoredChromosomes)
+        i=trunc(Int, rand()^2 * length(scoredChromosomes))+1
+        return scoredChromosomes[i]
+    end
+    for i in 1:max(1,trunc(Int,percentChange*length(scoredChromosomes)))
+        chr=breed(weightedRand(scoredChromosomes).chr,weightedRand(scoredChromosomes).chr)
+        push!(scoredChromosomes,chr)
+    end
+end
 
 #---------------
 
@@ -161,6 +226,11 @@ function _selectCulling!(chromosomes, ::Simple_select_culling_alg)
 end
 function _selectCulling!(chromosomes, ::Scalable_select_culling_alg)
     for i in 1:max(1,trunc(Int,0.1*length(chromosomes)))
+        pop!(chromosomes)
+    end
+end
+function selectCulling!(chromosomes,percentChange, ::Scalable_select_culling_alg)
+    for i in 1:max(1,trunc(Int,percentChange*length(chromosomes)))
         pop!(chromosomes)
     end
 end

@@ -1,3 +1,26 @@
+function algChoice()
+    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg \n 3 GreedyScalableAlg \n 4 VariableScalableAlg ")
+    algChoice = readline(stdin)
+    if algChoice == "1"
+        alg = simpleAlg
+    elseif algChoice == "2"
+        alg = ScalableAlg()
+    elseif algChoice == "3"
+        alg = GreedyScalableAlg()
+    elseif algChoice == "4"
+        alg = AlternatingScalableAlg()
+    end
+    return alg
+end
+function earlyStopChoice()
+    println("")
+    println("earlyStop ? y/n :")
+    earlyStop = readline(stdin) == "y"
+    return earlyStop
+end
+
+#---------------------
+
 println("start from existing chromosomes ? y/n :")
 initializeChoice = readline(stdin) == "y"
 if !initializeChoice
@@ -28,16 +51,8 @@ if !initializeChoice
         println("enter new iterationSteps :")
         iterationSteps = parse(Int, readline(stdin))
     end
-    println("")
-    println("earlyStop ? y/n :")
-    earlyStop = readline(stdin) == "y"
-    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg")
-    algChoice = readline(stdin)
-    if algChoice == "1"
-        alg = simpleAlg
-    elseif algChoice == "2"
-        alg = ScalableAlg()
-    end
+    earlyStop = earlyStopChoice()
+    alg= algChoice()
     println("")
     println("file name :")
     saveFile = readline(stdin) * ".jld"
@@ -51,18 +66,12 @@ else
     iterate_hook_alg=CollectMeanScore()
     println("select iterationSteps :")
     iterationSteps = parse(Int, readline(stdin))
-    println("")
-    println("earlyStop ? y/n :")
-    earlyStop = readline(stdin) == "y"
-    println("Which algorithm ? : \n 1 simpleAlg \n 2 ScalableAlg")
-    algChoice = readline(stdin)
-    if algChoice == "1"
-        alg = simpleAlg
-    elseif algchoice == "2"
-        alg = ScalableAlg()
-    end
+    earlyStop = earlyStopChoice()
+    alg = algChoice()
     chromosomes = continueEvolution(chromosomes, iterationSteps, earlyStop, saveFile, alg)
 end
 
 include("saveVariables.jl")
+
+#---------------
 
