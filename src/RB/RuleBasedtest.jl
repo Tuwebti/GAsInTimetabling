@@ -1,4 +1,4 @@
-function DeterminsticMain()
+function DeterminsticMain(studentsByModule)
     #TODO implement rooms size constraint
 
     #Initial variables
