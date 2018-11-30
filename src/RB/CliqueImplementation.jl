@@ -2,24 +2,29 @@
 function cliqueStrategy()
 
     dataset = copy(timetablingProblem.studentsByModule)
-    N = 10
-
-    lowestscoretimetable = dataset
-    comparetimetable = copy(timetablingProblem.studentsByModule)
-    #comparetimetable = deleteat!(lowestscoretimetable,findin(lowestscoretimetable,mostconstrainedModule))
-    DeterministicMain(lowestscoretimetable)
+    comparedataset = copy(timetablingProblem.studentsByModule)
+    (comparetimetable, lowestscoreUModules) = DeterminsticMain(dataset)
+    lowestscoretimetable = Dict{String,Set{Event}}()
+    unassignedmodules = []
     lowestscore = 100
+    rang = [1 2 3 4 5]
+    comparescore = [0 0 0 0 0]
+    for i in rang
+        modremove = mostConstrainedModule(comparedataset)
+        delete!(comparedataset,modremove)
+        copydataset = copy(comparedataset)
+        println("amount of modules: ",length(collect(keys(copydataset))))
+        (comparetimetable,unassignedmodules) = DeterminsticMain(comparedataset)
 
-    for i from 1:N
-        modremove = mostconstrainedModule(comparetimetable)
-        comparetimetable = deleteat!(comparetimetable,findin(comparetimetable,modremove))
-        DeterministicMain(comparetimetable)
-        comparescore[i] = length(unnasignedmodules)
+        comparescore[i] = length(unassignedmodules)
+
         if comparescore[i] < lowestscore
-            lowestscoretimetable = comparetimetable
+            lowestscoretimetable = copy(comparetimetable)
             lowestscore = comparescore[i]
-            lowestscoreUModules = unassignedModules
+            lowestscoreUModules = unassignedmodules
         end
+        comparedataset = copydataset
     end
-    return(lowestscoretimetable,unassignedModules)
+    println(comparescore)
+    return(lowestscoretimetable,lowestscoreUModules)
 end
