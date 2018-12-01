@@ -1,7 +1,8 @@
-include("load1.jl")
-include("load2.jl")
+#include("load1.jl")
+#include("load2.jl") type these two in select data u want
 
 include(joinpath("RB","Hierarchy.jl"))
-include(joinpath("RB","RuleBasedtest.jl"))
+include(joinpath("RB""RuleBasedtest.jl"))
 
-(timt,unass) = DeterminsticMain()
+dataInput = copy(timetablingProblem.studentsByModule)
+(timetableSolution,unassignedModules) = DeterminsticMain(dataInput)

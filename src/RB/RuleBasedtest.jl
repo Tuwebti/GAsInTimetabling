@@ -1,4 +1,4 @@
-function DeterminsticMain()
+function DeterminsticMain(studentsByModule)
     #TODO implement rooms size constraint
 
     #Initial variables
@@ -6,7 +6,6 @@ function DeterminsticMain()
     noSlots = timeslotamount
     slotsFree = zeros(noSlots)
     timeSlots = zeros(noSlots)
-    studentsByModule = copy(timetablingProblem.studentsByModule)
     studentsByTimeslot = Dict{String,Set{Student}}()
     modulesByTimeslot = Dict{String,Set{Event}}()
     timeSlotAvailableTEMP = Dict{String,Set{Event}}()
@@ -80,9 +79,9 @@ function DeterminsticMain()
 
     #DISPLAY TIMETABLE
     for key in map(x -> string(x),sort(map(x -> parse(Int, x), collect(keys(modulesByTimeslot)))))
-        print("timeslot " * key * " : ")
-        show(sort(collect(modulesByTimeslot[key])))
-        println()
+        #print("timeslot " * key * " : ")
+        #show(sort(collect(modulesByTimeslot[key])))
+        #println()
     end
 
     #DISPLAY UNASSIGNED MODULES
