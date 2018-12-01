@@ -4,7 +4,7 @@ iterate_hook_alg=CollectMeanScore()
 popSize = 80
 iterationSteps = 10000
 earlyStop = true
-alg = GreedyScalableAlg
+alg = GreedyScalableAlg()
 for i in 1:15
     saveFile = string(i)*"greedy.jld"
     println("\n\n\n\n")
