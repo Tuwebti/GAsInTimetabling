@@ -9,6 +9,7 @@ struct Year1Import <: ImportMode end
 struct Year2Import <: ImportMode end
 struct BothYearImport <: ImportMode end
 struct Data1Import <: ImportMode end
+struct WithClassroomImport <: ImportMode end
 function timetableImport(importmode=TestImport())
     _timetableImport(importmode)
 end
@@ -64,6 +65,34 @@ function _timetableImport(::Data1Import)
     studentsByModule = studentsbymodule(events, students, studentEnrollement)
     return SimpleTutorialTimetablingProblem(events, students, studentEnrollement, studentsByModule)
 end
+function _timetableImport(::WithClassroomImport)
+    lines = readlines(joinpath("data","dataset1.tim"))
+    firstLine = [parse(Int, x) for x in split(lines[1])]
+    eventNumber = firstLine[1]
+    roomNumber = firstLine[2]
+    studentNumber = firstLine[4]
+    events = Set([string(x) for x in 1:eventNumber])
+    students = Set([string(x) for x in 1:studentNumber])
+    studentEnrollement = Dict()
+    for i in 1:studentNumber
+        student = string(i)
+        studentEnrollement[student] = Set()
+        for j in 1:eventNumber
+            event = string(j)
+            index = (i-1)*eventNumber+ j + 1 + roomNumber
+            if lines[index]=="1"
+                push!(studentEnrollement[student] , event)
+            end
+        end
+    end
+    studentsByModule = studentsbymodule(events, students, studentEnrollement)
+    classrooms=Dict{Classroom,Int16}()
+    for classroom in 1:roomNumber
+        classSize = parse(Int16,lines[1+classroom])
+        classrooms[classroom]=classSize
+    end
+    return RoomTimetablingProblem(events, students, studentEnrollement, studentsByModule,classrooms)
+end
 
 function studentsbymodule(events,students,studentEnrollement)
     studentsByModule=Dict()
@@ -77,3 +106,4 @@ function studentsbymodule(events,students,studentEnrollement)
     end
     return studentsByModule
 end
+

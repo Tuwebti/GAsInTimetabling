@@ -1,4 +1,4 @@
-println("Select Import Mode : \n 1 : testinput \n 2 : realData \n 3 : benchmark dataset 1")
+println("Select Import Mode : \n 1 : testinput \n 2 : realData \n 3 : Competition data without classrooms \n 4 : Competition data with classrooms")
 choice = readline(stdin)
 if choice == "1"
     timeslotamount = 3
@@ -9,6 +9,9 @@ elseif choice == "2"
 elseif choice == "3"
     importMode=Data1Import()
     timeslotamount = 45
+elseif choice == "4"
+    importMode=WithClassroomImport()
+    timeslotamount = 45
 else error("Input should be 1 or 2") end
 println("Do you want to change timeslotamount ? (default is : " * string(timeslotamount) * " ) y/n :")
 changetimeslotflag = readline(stdin)
@@ -18,3 +21,4 @@ if changetimeslotflag == "y"
 end
 
 timetablingProblem = timetableImport(importMode)
+nothing #avoids returning timetablingProblem
