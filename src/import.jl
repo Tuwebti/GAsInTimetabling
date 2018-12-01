@@ -10,18 +10,18 @@ struct Year2Import <: ImportMode end
 struct BothYearImport <: ImportMode end
 struct Data1Import <: ImportMode end
 struct WithClassroomImport <: ImportMode end
-function timetableImport(importmode=TestImport())
-    _timetableImport(importmode)
+function timetableImport(dataFile,importmode=TestImport())
+    _timetableImport(dataFile,importmode)
 end
 
-function _timetableImport(::TestImport)
+function _timetableImport(dataFile,::TestImport)
     events::Set{Event} = Set(["ECM1","ECM2","ECM3","ECM4","ECM5"])
     students::Set{Student} = Set(["Barry","Julie","Charles"])
     studentEnrollement=Dict("Barry" => Set(["ECM2","ECM3"]) , "Julie" => Set(["ECM1","ECM2","ECM5"]) , "Charles" => Set(["ECM3","ECM4","ECM5"]))
     studentsByModule = studentsbymodule(events, students, studentEnrollement)
     SimpleTutorialTimetablingProblem(events , students , studentEnrollement, studentsByModule)
 end
-function _timetableImport(::BothYearImport)
+function _timetableImport(_,::BothYearImport)
     events::Set{Event} = Set(["MTH1001","MTH1002","MTH1003","MTH1004","MTH2001","MTH2002","MTH2003","MTH2004"])
     students::Set{Student} = Set([])
     studentEnrollement=Dict()
@@ -42,8 +42,8 @@ function _timetableImport(::BothYearImport)
     studentsByModule = studentsbymodule(events, students, studentEnrollement)
     SimpleTutorialTimetablingProblem(events , students , studentEnrollement, studentsByModule)
 end
-function _timetableImport(::Data1Import)
-    lines = readlines(joinpath("data","dataset1.tim"))
+function _timetableImport(dataFile,::Data1Import)
+    lines = readlines(dataFile)
     firstLine = [parse(Int, x) for x in split(lines[1])]
     eventNumber = firstLine[1]
     roomNumber = firstLine[2]
@@ -65,8 +65,8 @@ function _timetableImport(::Data1Import)
     studentsByModule = studentsbymodule(events, students, studentEnrollement)
     return SimpleTutorialTimetablingProblem(events, students, studentEnrollement, studentsByModule)
 end
-function _timetableImport(::WithClassroomImport)
-    lines = readlines(joinpath("data","dataset1.tim"))
+function _timetableImport(dataFile,::WithClassroomImport)
+    lines = readlines(dataFile)
     firstLine = [parse(Int, x) for x in split(lines[1])]
     eventNumber = firstLine[1]
     roomNumber = firstLine[2]
