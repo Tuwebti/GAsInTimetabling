@@ -82,6 +82,7 @@ function sefm(chr::Chromosome{WTutorialGene},key)
     end
     chr[key].classroom=maxRoom[1]
     setdiff!(chr.availableRooms[chr[key].timePeriod] , [chr[key].classroom])
+    return chr
 end
 
 
