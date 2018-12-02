@@ -16,15 +16,27 @@ function mostConstrainedModule(studentsByModuleHier)
             mostConstrainedModule = moduleCompare
             mostConstrainedModuleNo = constraintScore
         elseif mostConstrainedModuleNo == constraintScore
-            #Choose Randomly
+            #Fix 1
             if mostConstrainedModule == ""
-                #Fix for case of no interactions between only 2 module size
                 mostConstrainedModule = collect(keys(studentsByModuleHier))[1]
             end
-            temp = [mostConstrainedModule,moduleCompare]
-            mostConstrainedModule = rand(temp)
+            #Fix 2
             if mostConstrainedModule == moduleCompare
                 mostConstrainedModuleNo = constraintScore
+            end
+
+            #choose based on module size
+            moduleCompareSize = length(collect(studentsByModuleHier[moduleCompare]))
+            mostConstrainedSize = length(collect(studentsByModuleHier[mostConstrainedModule]))
+
+            #assignes monstConstrainedModule to highest score
+            if  mostConstrainedSize < moduleCompareSize
+                #modulecompare has fewer students
+                mostConstrainedModule = moduleCompare
+            elseif mostConstrainedSize == moduleCompareSize
+                #Choose Randomly, when rooms equal size
+                temp = [mostConstrainedModule,moduleCompare]
+                mostConstrainedModule = rand(temp)
             end
         end
     end
