@@ -38,6 +38,9 @@ if !initializeChoice
     elseif choice == "3"
         popSize = 30
         iterationSteps = 2000
+    elseif choice == "4"
+        popSize = 80
+        iterationSteps = 10000
     end
     println("Do you want to change popSize ? (default is : " * string(popSize) * " ) y/n :")
     changepopSizeflag = readline(stdin)

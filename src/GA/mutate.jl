@@ -43,7 +43,7 @@ end
 
 
 
-function sefm(chr,key)
+function sefm(chr::Chromosome,key)
     maxTime= (0,0)
     for i in 1:timeslotamount
         chr[key].timePeriod=i
@@ -55,3 +55,34 @@ function sefm(chr,key)
     chr[key].timePeriod=maxTime[1]
     return chr
 end
+#prioritise timeslots over rooms
+function sefm(chr::Chromosome{WTutorialGene},key)
+    push!(chr.availableRooms[chr[key].timePeriod] , chr[key].classroom)
+    maxTime= (0,0)
+    for i in 1:timeslotamount
+        chr[key].timePeriod=i
+        newFitness=fitness(chr)
+        if newFitness> maxTime[2]
+            maxTime=(i, newFitness)
+        end
+    end
+    chr[key].timePeriod=maxTime[1]
+    rooms = chr.availableRooms[maxTime[1]]
+    if isempty(rooms)  #if their are no available rooms, proceed over all rooms
+        rooms=keys(timetablingProblem.classrooms)
+    end
+    enoughSpace(room) = timetablingProblem.classrooms[room] >= eventSize[key]
+    maxRoom = (0,0)
+    for room in filter(x -> enoughSpace(x), rooms)
+        chr[key].classroom=room
+        newFitness = fitness(chr)
+        if newFitness > maxRoom[2]
+            maxRoom=(room, newFitness)
+        end
+    end
+    chr[key].classroom=maxRoom[1]
+    setdiff!(chr.availableRooms[chr[key].timePeriod] , [chr[key].classroom])
+end
+
+
+

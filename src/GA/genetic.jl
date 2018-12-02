@@ -28,22 +28,48 @@ end
 
 #---------------
 
+struct TimeslotsOnly end
+struct TimeslotsAndClassrooms end
 #TODO make initialzePop generic
 function initializePop(popSize::Int)
     if typeof(timetablingProblem) == SimpleTutorialTimetablingProblem
-        chromosomes=_initializePopTutorial(popSize)
+        chromosomes=_initializePopTutorial(popSize,TimeslotsOnly())
+        beginHook(chromosomes)
+        return chromosomes
+    elseif typeof(timetablingProblem) == RoomTimetablingProblem
+        chromosomes=_initializePopTutorial(popSize,TimeslotsAndClassrooms())
         beginHook(chromosomes)
         return chromosomes
     else
         error("timetablingProblem should be of type SimpleTutorialTimetablingProblem")
     end
 end
-function _initializePopTutorial(popSize)
+function _initializePopTutorial(popSize,::TimeslotsOnly)
     Chromosomes::ScoredChromosomes{SimpleTutorialGene}=[]
     for i in 1:popSize
         chr = Chromosome{SimpleTutorialGene}([])
         for e in timetablingProblem.events
             chr[e] = SimpleTutorialGene(rand(1:timeslotamount))
+        end
+        push!(Chromosomes,chr)
+    end
+    return Chromosomes
+end
+function _initializePopTutorial(popSize,::TimeslotsAndClassrooms)
+    Chromosomes::ScoredChromosomes{WTutorialGene}=[]
+    for i in 1:popSize
+        chr = Chromosome{WTutorialGene}([])
+        scoredChr = ScoredChromosome(chr,0)
+        for e in timetablingProblem.events
+            timeslot = rand(1:timeslotamount)
+            rooms = chr.availableRooms[timeslot]
+            if isempty(rooms)
+                room = rand(keys(timetablingProblem.classrooms))
+            else
+                room = rand(chr.availableRooms[timeslot])
+            end
+            setdiff!(chr.availableRooms[timeslot],[room])
+            chr[e] = WTutorialGene(timeslot,room)
         end
         push!(Chromosomes,chr)
     end
@@ -137,7 +163,8 @@ function selectMutation!(scoredChromosomes , alg::Select_mutation_alg = simple_s
     _selectMutation!(scoredChromosomes, alg)
 end
 function _selectMutation!(scoredChromosomes,::Simple_select_mutation_alg)
-    scoredChr=rand(scoredChromosomes)
+    i = rand(1:lenght(scoredChromosomes))
+    scoredChr=scoredChromosomes[i]
     mutate!(scoredChr)
 end
 #potentially mutate any chromosome, with more likelyhood of mutating the worst, with a 0.35 chance of mutating the worst one
@@ -170,7 +197,6 @@ function selectMutation!(scoredChromosomes,mutatePercent,greedyFlag,::AlternateS
         end
     end
 end
-
 
 #---------------
 

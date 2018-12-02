@@ -19,6 +19,10 @@ mutable struct TutorialGene <: EventBasedGene   #represents Wednesday morning tu
     lecturer::Lecturer
 end
 TutorialGene(timeperiod)=TutorialGene(timeperiod, "noClassroom", "noLecturer")
+mutable struct WTutorialGene <: EventBasedGene
+    timePeriod::Timeperiod
+    classroom::Classroom
+end
 mutable struct SimpleTutorialGene <: EventBasedGene
     timePeriod::Timeperiod
 end
@@ -26,8 +30,25 @@ end
 
 struct Chromosome{V <: Gene}
     chromosome::Dict{Event,V}
+    availableRooms::Dict{Timeperiod,Set{Classroom}}
     Chromosome{V}(itr) where V =new(Dict(itr))
+    Chromosome{WTutorialGene}(itr) = new(Dict(itr),allAvailableRooms!(Dict()))
 end
+#resets the the available rooms so that all rooms are available
+function allAvailableRooms!(availableRooms)
+    classrooms = Set(keys(timetablingProblem.classrooms))
+    for timeslot in 1:timeslotamount
+        availableRooms[timeslot]=copy(classrooms)
+    end
+    return availableRooms
+end
+function resetAvailableRooms!(chr::Chromosome{WTutorialGene})
+    allAvailableRooms!(chr.availableRooms)
+    for gene in values(chr)
+        setdiff!(chr.availableRooms[gene.timePeriod],[gene.classroom])
+    end
+end
+resetAvailableRooms!(chr::Chromosome) = nothing
 #overload functions to make Chromosome appear as a Dict (might be possible to avoid with macros)
 getindex(chr::Chromosome,i)= chr.chromosome[i]
 setindex!(chr::Chromosome, val, key)= chr.chromosome[key] = val

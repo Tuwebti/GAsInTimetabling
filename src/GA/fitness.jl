@@ -36,6 +36,13 @@ end
 function _fitness(chr::Chromosome{SimpleTutorialGene} , constraints::EdgeConstraints , ::SimpleFitnessAlg)
     return 1/ (1 + clashAmount(chr, constraints.edges))
 end
+function _fitness(chr::Chromosome{WTutorialGene}, constraints::EdgeConstraints, ::SimpleFitnessAlg)
+    timeClashWeight=0.5
+    roomClashWeight=0.5
+    timeClashScore = 1/ (1 + clashAmount(chr, constraints.edges))
+    roomClashScore = 1/ (1 + roomClashAmount(chr))
+    return timeClashWeight * timeClashScore + roomClashWeight * roomClashScore
+end
 
 # If n students experience a module clash, then that counts as n clashes. here the factor 2 is because we count each pair twice (because a clash (a,b) is a clash (b,a))
 function clashAmount(chr::Chromosome , edges)
@@ -47,6 +54,13 @@ function clashAmount(chr::Chromosome , edges)
     end
     return violations / 2
 end
+function roomClashAmount(chr::Chromosome)
+    genes = values(chr)
+    uniqueCombination=Set(map(x -> (x.timePeriod,x.classroom) ,genes))
+    return length(genes) - length(uniqueCombination)
+end
+
+
 
 #-------------
 
@@ -54,7 +68,7 @@ function getConstraints()
     _getConstraints(timetablingProblem)
 end
 # record the number of clashes
-function _getConstraints(problem::SimpleTutorialTimetablingProblem)
+function _getConstraints(problem::TimetablingProblem)
     constraints = EdgeConstraints(Dict())
     for events in values(problem.studentEnrollement)
         for clash in findPairs(events)

@@ -39,5 +39,13 @@ if changetimeslotflag == "y"
 end
 
 timetablingProblem = timetableImport(dataFile,importMode)
+
+# this defines globals to speed up the classroom algorithms
+if typeof(timetablingProblem) == RoomTimetablingProblem
+    eventSize = Dict{Event,Int}()
+    for e in timetablingProblem.events
+        eventSize[e] = length(timetablingProblem.studentsByModule[e])
+    end
+end
 nothing #avoids returning timetablingProblem
 
