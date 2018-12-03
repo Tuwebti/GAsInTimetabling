@@ -1,5 +1,8 @@
-function DeterminsticMain(studentsByModule)
+
+function DeterminsticMain(studentsByModule,softconstraint)
     #Initial variables
+    #TODO using Compat, Random, Distributions ......... !!!!use this to work!!!!
+    Random.seed!(123)
     rooms = copy(timetablingProblem.classrooms)
     modulesAllAssigned = false
     roomAvailable = false
@@ -11,6 +14,7 @@ function DeterminsticMain(studentsByModule)
     timeSlotAvailableTEMP = Dict{String,Set{Event}}()
     availableRooms = Dict{String,Array{Int16,1}}()
     roomAvailability = Dict{String,Array{Int16,1}}()
+    softConstraintScore = Dict{String,Array{Float64,1}}()
     unassignedModules = []
     lengthOfKeys = length(collect(keys(studentsByModule)))
 
@@ -41,6 +45,8 @@ function DeterminsticMain(studentsByModule)
             timeSlotAvailableTEMP[timeslot] = Set()
             availableRoomsSLOT = string(i)
             availableRooms[availableRoomsSLOT] = []
+            softConstraintScoreSLOT = string(i)
+            softConstraintScore[timeslot] = []
         end
         #Initialise roomslots available for each iterates
         #Iterate through timeslots
@@ -60,8 +66,12 @@ function DeterminsticMain(studentsByModule)
                 if roomAvailable == true
                     union!(timeSlotAvailableTEMP[timeslot],[event])
                     foundSlot = true
+                    #Calculate soft constraint score
+                    if softconstraint
+                        score = softConstraints(studentsByTimeslot,studentsByModule,event,timeslot)
+                        append!(softConstraintScore[timeslot],score)
+                    end
                 end
-                #SOFT CONSTRAINT SCORE HERE
             end
         end
         #Condtion for Unassigned Modules
@@ -70,17 +80,23 @@ function DeterminsticMain(studentsByModule)
         else
             #SOFT CONSTRAINTS APPLIED
             mostMinRoomSize = maximum(collect(values(rooms)))+1
+            lowestscore = 100
             minSizeTimeslot = ""
             for timeslot in map(x -> string(x),sort(map(x -> parse(Int, x), collect(keys(timeSlotAvailableTEMP)))))
                 if ! isempty(get(timeSlotAvailableTEMP,timeslot,0))
-                    #For now we just take first available slot, this is optimal
-                    mostMinRoomSize = minimum(availableRooms[timeslot])
-                    minSizeTimeslot = timeslot
-                    break
-                    #Soft constraints replace soft room constraints in here
-                    if minimum(availableRooms[timeslot])  < mostMinRoomSize
+                    if !softconstraint
+                        #For now we just take first available slot, this is optimal
                         mostMinRoomSize = minimum(availableRooms[timeslot])
                         minSizeTimeslot = timeslot
+                        break
+                    else
+                        score2 = collect(softConstraintScore[timeslot])[1]
+                        if score2  < lowestscore
+                            #Soft constraints replace soft room constraints in here
+                            lowestscore = score2
+                            mostMinRoomSize = minimum(availableRooms[timeslot])
+                            minSizeTimeslot = timeslot
+                        end
                     end
                 end
             end
@@ -105,13 +121,3 @@ function DeterminsticMain(studentsByModule)
     #Returns pair of Modules by timeslot and unassigend Modules
     return (modulesByTimeslot,unassignedModules)
 end
-
-#TODO use this to test multiple iterations until it find a perfect solution
-#while true
-#       data = copy(timetablingProblem.studentsByModule)
-#       (a,b) = DeterminsticMain(data)
-#       if length(b) == 0
-#       print(a)
-#       break
-#       end
-#      end
