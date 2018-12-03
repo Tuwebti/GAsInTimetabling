@@ -2,6 +2,8 @@
 function find_solutions(N,soft)
 lowestScoreTimetable = Dict{String,Set{Event}}()
 highestScoreTimetable = Dict{String,Set{Event}}()
+highestUnassigned = []
+lowestUnassigned = []
 minb = 100
 maxb = 0
 for i in 1:N
@@ -18,6 +20,7 @@ for i in 1:N
                highestUnassigned = copy(b)
                highestScoreTimetable = copy(a)
       end
+      println("iteration: ",N)
  end
  return (highestScoreTimetable,highestUnassigned,lowestScoreTimetable,lowestUnassigned)
 end

@@ -27,5 +27,5 @@ function cliqueStrategy()
         comparedataset = copydataset
     end
     println(comparescore)
-    return(lowestscoretimetable,removedModules,comparescore)
+    return(lowestscoretimetable,lowestscoreUModules,removedModules,comparescore)
 end
