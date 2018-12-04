@@ -1,7 +1,7 @@
-(modulesByTimeslot,unnassignedModules)= DeterminsticMain()
+(modulesByTimeslot,unnassignedModules,roomAvailability)= DeterminsticMain()
 function convertToChromosome(modulesByTimeslot)
     timeslotByModule = Dict()
-    chromosome = Chromosome{SimpleTutorialGene}([])
+    chromosome = Chromosome{WTutorialGene}([])
     for (timeslotkey,events) in pairs(modulesByTimeslot)
         for event in events
             timeslot= parse(Int,timeslotkey)
@@ -17,3 +17,7 @@ function convertToChromosome(modulesByTimeslot)
 end
 chromosome = convertToChromosome(modulesByTimeslot)
 println("deterministic fitness score is ", fitness(chromosome))
+
+availableRooms=Dict()
+for timeperiod in keys(roomAvailability)
+    t = parse(Int,timeperiod)
