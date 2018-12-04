@@ -66,7 +66,7 @@ function _initializePopTutorial(popSize,::TimeslotsAndClassrooms)
             if isempty(rooms)
                 room = rand(keys(timetablingProblem.classrooms))
             else
-                room = rand(chr.availableRooms[timeslot])
+                room = rand(rooms)
             end
             setdiff!(chr.availableRooms[timeslot],[room])
             chr[e] = WTutorialGene(timeslot,room)
