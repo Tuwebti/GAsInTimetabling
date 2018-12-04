@@ -1,20 +1,21 @@
 #TODO implement a clique/degree strategy Then retimetable those modules
 function cliqueStrategy()
-
     dataset = copy(timetablingProblem.studentsByModule)
     comparedataset = copy(timetablingProblem.studentsByModule)
-    (comparetimetable, lowestscoreUModules) = DeterminsticMain(dataset)
+    (comparetimetable, lowestscoreUModules) = DeterminsticMain(dataset,false)
     lowestscoretimetable = Dict{String,Set{Event}}()
     unassignedmodules = []
     lowestscore = 100
-    rang = [1 2 3 4 5]
-    comparescore = [0 0 0 0 0]
-    for i in rang
+    removeNmodules = 50
+    removedModules = []
+    comparescore = zeros(Int,1,removeNmodules)
+    for i in 1:removeNmodules
         modremove = mostConstrainedModule(comparedataset)
+        union!(removedModules,[modremove])
         delete!(comparedataset,modremove)
         copydataset = copy(comparedataset)
         println("amount of modules: ",length(collect(keys(copydataset))))
-        (comparetimetable,unassignedmodules) = DeterminsticMain(comparedataset)
+        (comparetimetable,unassignedmodules) = DeterminsticMain(comparedataset,false)
 
         comparescore[i] = length(unassignedmodules)
 
@@ -26,5 +27,5 @@ function cliqueStrategy()
         comparedataset = copydataset
     end
     println(comparescore)
-    return(lowestscoretimetable,lowestscoreUModules)
+    return(lowestscoretimetable,lowestscoreUModules,removedModules,comparescore)
 end
