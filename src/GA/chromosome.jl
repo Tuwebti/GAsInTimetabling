@@ -47,4 +47,4 @@ mutable struct ScoredChromosome{V}
     score::Real
 end
 ScoredChromosomes{T} = Vector{ScoredChromosome{T}}
-meanScore(chrs::ScoredChromosomes) = Statistics.mean( map(chr -> chr.score , chrs) )
+meanScore(chrs) = Statistics.mean( map(chr -> chr.score , chrs) )
