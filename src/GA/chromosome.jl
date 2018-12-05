@@ -32,8 +32,9 @@ struct Chromosome{V <: Gene}
     chromosome::Dict{Event,V}
     availableRooms::Dict{Timeperiod,Set{Classroom}}
     Chromosome{V}(itr) where V =new(Dict(itr))
-    Chromosome{WTutorialGene}(itr) = new(Dict(itr),allAvailableRooms!(Dict()))
+    Chromosome{WTutorialGene}(itr,dict) = new(Dict(itr),dict)
 end
+Chromosome{WTutorialGene}(itr) = new(Dict(itr),allAvailableRooms!(Dict()))
 #resets the the available rooms so that all rooms are available
 function allAvailableRooms!(availableRooms)
     classrooms = Set(keys(timetablingProblem.classrooms))
