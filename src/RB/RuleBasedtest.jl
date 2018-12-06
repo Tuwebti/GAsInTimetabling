@@ -1,8 +1,8 @@
 
+
 function DeterminsticMain(studentsByModule,softconstraint)
     #Initial variables
     #TODO using Compat, Random, Distributions ......... !!!!use this to work!!!!
-    Random.seed!(123)
     rooms = copy(timetablingProblem.classrooms)
     modulesAllAssigned = false
     roomAvailable = false
@@ -46,7 +46,7 @@ function DeterminsticMain(studentsByModule,softconstraint)
             availableRoomsSLOT = string(i)
             availableRooms[availableRoomsSLOT] = []
             softConstraintScoreSLOT = string(i)
-            softConstraintScore[timeslot] = []
+            softConstraintScore[softConstraintScoreSLOT] = []
         end
         #Initialise roomslots available for each iterates
         #Iterate through timeslots
@@ -119,5 +119,5 @@ function DeterminsticMain(studentsByModule,softconstraint)
     #DISPLAY UNASSIGNED MODULES
     println("Number of Modules Unassigned: ",length(unassignedModules))
     #Returns pair of Modules by timeslot and unassigend Modules
-    return (modulesByTimeslot,unassignedModules)
+    return (modulesByTimeslot,unassignedModules,roomAvailability)
 end

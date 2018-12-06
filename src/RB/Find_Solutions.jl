@@ -1,14 +1,14 @@
 #TODO use this to test for N iterations until it find a perfect solution
-function find_solutions(N,soft)
+using Compat, Random, Distributions
 lowestScoreTimetable = Dict{String,Set{Event}}()
 highestScoreTimetable = Dict{String,Set{Event}}()
 highestUnassigned = []
 lowestUnassigned = []
 minb = 100
 maxb = 0
-for i in 1:N
+for i in 1:10
        data = copy(timetablingProblem.studentsByModule)
-       (a,b) = DeterminsticMain(data,soft)      #toggle true/false for soft constraints
+       (a,b) = DeterminsticMain(data,true)      #toggle true/false for soft constraints
 
        if length(b) < minb
                minb = length(b)
@@ -23,4 +23,3 @@ for i in 1:N
       println("iteration: ",N)
  end
  return (highestScoreTimetable,highestUnassigned,lowestScoreTimetable,lowestUnassigned)
-end

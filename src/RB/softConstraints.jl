@@ -3,23 +3,23 @@ function softConstraints(studentsByTimeslot,studentsByModule,event,timeslot)
     softConstraintScore = 3   #average
     noOfWeights = 1
     #Avoiding early starts, we consider early starts and late finishes to be
-    earlyDist = Normal(3.06383,1.336351)
+    earlyDist = 3.06383
     if parse(Int,timeslot) <= round(timeslots/5)    #definition for EARLY FINISH
         #Weight early finish score
-        softConstraintScore += rand(earlyDist)
+        softConstraintScore += earlyDist
         noOfWeights +=1
     end
 
     #Avoiding late finishes
-    lateDist = Normal(3.085106,1.311906)
+    lateDist = 3.085106
     if parse(Int,timeslot) >= floor((4*timeslots)/5)    #definition for LATE FINISH
         #Weight late finish score
-        softConstraintScore += rand(lateDist)
+        softConstraintScore += lateDist
         noOfWeights +=1
     end
 
     #Avoiding consecutive modules
-    consecutiveDist = Normal(2.255319,0.998642)
+    consecutiveDist = 2.255319
     consecutiveScore = 1
     #timeslot before current one
     if timeslot != "1"
@@ -40,12 +40,12 @@ function softConstraints(studentsByTimeslot,studentsByModule,event,timeslot)
         end
     end
     #Weight consecutive score
-    softConstraintScore += rand(consecutiveDist)*(consecutiveScore/length(collect(values(studentsByModule[event]))))
+    softConstraintScore += (consecutiveDist)*(consecutiveScore/length(collect(values(studentsByModule[event]))))
     noOfWeights += consecutiveScore/length(collect(values(studentsByModule[event])))
 
     #Avoiding large gaps
     largeGap = timeslots/2  #definition for LARGE GAPS
-    gapDist = Normal(2.978723,1.29742)
+    gapDist = 2.978723
     gapScore = 0
     for students in studentsByModule[event]
         for slot in keys(studentsByTimeslot)
@@ -57,7 +57,7 @@ function softConstraints(studentsByTimeslot,studentsByModule,event,timeslot)
     end
 end
 #Weight large gaps
-softConstraintScore += rand(gapDist)*(gapScore/length(collect(values(studentsByModule[event]))))
+softConstraintScore += (gapDist)*(gapScore/length(collect(values(studentsByModule[event]))))
 noOfWeights += gapScore/length(collect(values(studentsByModule[event])))
 
 #Final average calculation
